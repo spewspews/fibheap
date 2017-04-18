@@ -47,7 +47,7 @@ fibfree(Fibheap *h)
 }
 
 static Fibnode*
-fibconcat(Fibnode *h1, Fibnode *h2)
+concat(Fibnode *h1, Fibnode *h2)
 {
 	Fibnode *prev;
 
@@ -73,12 +73,12 @@ meld(Fibnode *h1, Fibnode *h2, Fibcmp cmp)
 	if(h2 == nil)
 		return h1;
 
-	fibconcat(h1, h2);
+	concat(h1, h2);
 	return cmp(h1, h2) <= 0 ? h1 : h2;
 }
 
 static Fibnode*
-fibinit(Fibnode *n)
+initnode(Fibnode *n)
 {
 	n->p = nil;
 	n->c = nil;
@@ -92,13 +92,13 @@ fibinit(Fibnode *n)
 void
 fibinsert(Fibheap *h, Fibnode *n)
 {
-	h->min = meld(h->min, fibinit(n), h->cmp);
+	h->min = meld(h->min, initnode(n), h->cmp);
 }
 
 static Fibnode*
 link1(Fibnode *x, Fibnode *y)
 {
-	x->c = fibconcat(x->c, y);
+	x->c = concat(x->c, y);
 	y->p = x;
 	y->mark = 0;
 	x->rank += y->rank + 1;
@@ -219,7 +219,7 @@ removenode(Fibnode *n)
 	return next;
 }
 
-void
+static void
 clearchildren(Fibnode *n)
 {
 	Fibnode *c;
@@ -231,7 +231,7 @@ clearchildren(Fibnode *n)
 	} while(c != n->c);
 }
 
-int
+static int
 fibdeletemin(Fibheap *h)
 {
 	Fibnode *head, *min, *n;
@@ -241,7 +241,7 @@ fibdeletemin(Fibheap *h)
 		return 0;
 
 	clearchildren(min);
-	head = fibconcat(removenode(min), min->c);
+	head = concat(removenode(min), min->c);
 	if(head == nil) {
 		h->min = nil;
 		return 0;
@@ -250,7 +250,7 @@ fibdeletemin(Fibheap *h)
 	return linkstep(h, head);
 }
 
-void
+static void
 cut(Fibheap *h, Fibnode *n)
 {
 	Fibnode *p;
@@ -261,7 +261,7 @@ cut(Fibheap *h, Fibnode *n)
 	h->min = meld(h->min, n, h->cmp);
 }
 
-void
+static void
 cascadingcut(Fibheap *h, Fibnode *n)
 {
 	Fibnode *p;
@@ -305,6 +305,6 @@ fibdelete(Fibheap *h, Fibnode *n)
 
 	clearchildren(n);
 	removenode(n);
-	fibconcat(h->min, n->c);
+	concat(h->min, n->c);
 	return 0;
 }
