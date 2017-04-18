@@ -28,7 +28,6 @@ main(void)
 {
 	Fibheap *h;
 	Int pool[10], *i;
-	int j;
 
 	h = fibcreate(intcmp);
 	for(i = pool; i < pool+10; i++) {

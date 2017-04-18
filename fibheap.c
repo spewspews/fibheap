@@ -231,10 +231,10 @@ clearchildren(Fibnode *n)
 	} while(c != n->c);
 }
 
-static int
+int
 fibdeletemin(Fibheap *h)
 {
-	Fibnode *head, *min, *n;
+	Fibnode *head, *min;
 
 	min = h->min;
 	if(min == nil)
