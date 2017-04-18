@@ -219,6 +219,18 @@ removenode(Fibnode *n)
 	return next;
 }
 
+void
+clearchildren(Fibnode *n)
+{
+	Fibnode *c;
+
+	c = n->c;
+	if(c != nil) do {
+		c->p = nil;
+		c = c->next;
+	} while(c != n->c);
+}
+
 int
 fibdeletemin(Fibheap *h)
 {
@@ -228,14 +240,8 @@ fibdeletemin(Fibheap *h)
 	if(min == nil)
 		return 0;
 
-	n = min->c;
-	if(n != nil) do {
-		n->p = nil;
-		n = n->next;
-	} while(n != min->c);
-
-	head = removenode(min);
-	head = fibconcat(head, min->c);
+	clearchildren(min);
+	head = fibconcat(removenode(min), min->c);
 	if(head == nil) {
 		h->min = nil;
 		return 0;
@@ -294,12 +300,10 @@ fibdelete(Fibheap *h, Fibnode *n)
 	if(h->min == n)
 		return fibdeletemin(h);
 
-	if(n->p == nil) {
-		removenode(n);
-		return 0;
-	}
+	if(n->p != nil)
+		cascadingcut(h, n);
 
-	cascadingcut(h, n);
+	clearchildren(n);
 	removenode(n);
 	fibconcat(h->min, n->c);
 	return 0;
