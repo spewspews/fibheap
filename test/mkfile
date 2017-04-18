@@ -1,0 +1,7 @@
+</$objtype/mkfile
+
+TARG=fibheaptest
+OFILES=fibheaptest.$O ../fibheap.$O
+BIN=.
+
+</sys/src/cmd/mkone
