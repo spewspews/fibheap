@@ -205,6 +205,10 @@ removenode(Fibnode *n)
 {
 	Fibnode *next;
 
+	n->p = nil;
+	if(n->next == n)
+		return nil;
+
 	next = n->next;
 	n->next->prev = n->prev;
 	n->prev->next = n->next;
@@ -220,14 +224,8 @@ fibdeletemin(Fibheap *h)
 	if(min == nil)
 		return 0;
 
-	chead = min->c;
-
-	if(min->next == min)
-		head = nil;
-	else
-		head = removenode(min);
-
-	head = fibconcat(chead, head);
+	head = removenode(min);
+	head = fibconcat(head, min->c);
 	if(head == nil) {
 		h->min = nil;
 		return 0;
@@ -242,12 +240,8 @@ cut(Fibheap *h, Fibnode *n)
 	Fibnode *p;
 
 	p = n->p;
-	p->rank -= n->rank-1;
-	if(n->next = n)
-		p->c = nil;
-	else
-		p->c = removenode(n);
-	n->p = nil;
+	p->rank -= n->rank + 1;
+	p->c = removenode(n);
 	h->min = meld(h->min, n, h->cmp);
 }
 
