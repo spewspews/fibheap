@@ -19,3 +19,5 @@ int      fibdeletemin(Fibheap*);
 Fibheap *fibcreate(Fibcmp);
 Fibnode *fibfree(Fibheap*);
 void     fibinsert(Fibheap*, Fibnode*);
+void     fibdecreasekey(Fibheap*, Fibnode*);
+int      fibdelete(Fibheap*, Fibnode*);

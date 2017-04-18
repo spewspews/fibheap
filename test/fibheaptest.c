@@ -42,11 +42,13 @@ main(void)
 		print("Adding %d %p\n", i->i, i);
 		fibinsert(fh, i);
 	}
+
 	while(fh->min != nil) {
 		i = (Int*)fh->min;
 		print("Heap sorted %d %p\n", i->i, i);
 		if(fibdeletemin(fh) < 0)
 			sysfatal("delete failed: %r");
 	}
+
 	exits(nil);
 }

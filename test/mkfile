@@ -1,7 +1,7 @@
 </$objtype/mkfile
 
-TARG=fibheaptest
-OFILES=fibheaptest.$O ../fibheap.$O
+TARG=fibheaptest decreasetest
+OFILES=../fibheap.$O
 BIN=.
 
-</sys/src/cmd/mkone
+</sys/src/cmd/mkmany

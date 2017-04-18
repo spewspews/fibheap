@@ -141,8 +141,6 @@ arraylink(Fibheap *h, Fibnode *n)
 				return -1;
 		}
 
-		n->next = n;
-		n->prev = n;	
 		x = h->arr[n->rank];
 		if(x == nil) {
 			h->arr[n->rank] = n;
@@ -165,6 +163,8 @@ linkheaps(Fibheap *h, Fibnode *head)
 	n = head;
 	do {
 		next = n->next;
+		n->next = n;
+		n->prev = n;
 		rank = arraylink(h, n);
 		if(rank == -1)
 			return -1;
@@ -212,17 +212,27 @@ removenode(Fibnode *n)
 	next = n->next;
 	n->next->prev = n->prev;
 	n->prev->next = n->next;
+
+	n->next = n;
+	n->prev = n;
+
 	return next;
 }
 
 int
 fibdeletemin(Fibheap *h)
 {
-	Fibnode *head, *chead, *min;
+	Fibnode *head, *min, *n;
 
 	min = h->min;
 	if(min == nil)
 		return 0;
+
+	n = min->c;
+	if(n != nil) do {
+		n->p = nil;
+		n = n->next;
+	} while(n != min->c);
 
 	head = removenode(min);
 	head = fibconcat(head, min->c);
@@ -268,7 +278,7 @@ void
 fibdecreasekey(Fibheap *h, Fibnode *n)
 {
 	if(n->p == nil) {
-		h->min = h->cmp(h->min, n) ? h->min : n;
+		h->min = h->cmp(h->min, n) <= 0 ? h->min : n;
 		return;
 	}
 
