@@ -2,17 +2,6 @@
 #include <libc.h>
 #include "fibheap.h"
 
-static void
-printlist(Fibnode *head) {
-	Fibnode *n;
-
-	n = head;
-	do {
-		fprint(2, "%p %p %p\n", n, n->prev, n->next);
-		n = n->next;
-	} while(n != head);
-}
-
 Fibheap*
 fibcreate(Fibcmp cmp)
 {
@@ -126,7 +115,7 @@ resizearr(Fibheap *h, int rank)
 	h->arr = calloc(h->arrlen, sizeof(*h->arr));
 	if(h->arr == nil)
 		return -1;
-	memcpy(h->arr, a, alen);
+	memcpy(h->arr, a, alen*sizeof(*h->arr));
 	return 0;
 }
 
@@ -219,16 +208,18 @@ removenode(Fibnode *n)
 	return next;
 }
 
-static void
-clearchildren(Fibnode *n)
+static Fibnode*
+detachchildren(Fibnode *p)
 {
 	Fibnode *c;
 
-	c = n->c;
+	c = p->c;
 	if(c != nil) do {
 		c->p = nil;
 		c = c->next;
-	} while(c != n->c);
+	} while(c != p->c);
+	p->c = nil;
+	return c;
 }
 
 int
@@ -240,8 +231,7 @@ fibdeletemin(Fibheap *h)
 	if(min == nil)
 		return 0;
 
-	clearchildren(min);
-	head = concat(removenode(min), min->c);
+	head = concat(removenode(min), detachchildren(min));
 	if(head == nil) {
 		h->min = nil;
 		return 0;
@@ -303,8 +293,7 @@ fibdelete(Fibheap *h, Fibnode *n)
 	if(n->p != nil)
 		cascadingcut(h, n);
 
-	clearchildren(n);
 	removenode(n);
-	concat(h->min, n->c);
+	concat(h->min, detachchildren(n));
 	return 0;
 }
